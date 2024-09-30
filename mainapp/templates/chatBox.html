@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat Box</title>
+  <link rel="stylesheet" href="{% static 'chatbox.css' %}">
+</head>
+<body>
+  <div class="chatbox_container" id="chatbox">
+    <!-- Chat messages will be dynamically inserted here -->
+  </div>
+  
+  <div class="text_box">
+    <input type="text" name="message" id="message_input" class="input_text" placeholder="Type..." onkeypress="handleKeyPress(event)">
+    <input type="button" value="Send" class="send_btn" onclick="sendMessage()">
+  </div>
+
+  <script>
+    const apiUrl = '/chatbotAPI/';  // Replace with your chatbot API URL
+    
+    // Function to send a message using POST request
+    async function sendMessage() {
+      const messageInput = document.getElementById('message_input');
+      const message = messageInput.value.trim();
+      if (message === "") return;  // Prevent sending empty messages
+
+      // Immediately add user's message to chatbox
+      addMessageToChatbox('You', message, 'sent');
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken') // If CSRF protection is enabled
+        },
+        body: JSON.stringify({ user_message: message })
+      });
+
+      if (response.ok) {
+        messageInput.value = "";  // Clear input box after sending
+        fetchMessages();  // Fetch new messages immediately after sending
+      } else {
+        console.error('Failed to send message');
+      }
+    }
+
+    // Function to fetch previous and current messages using GET request
+    async function fetchMessages() {
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')  // If CSRF protection is enabled
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        displayMessages(data.user_chat_list, data.assistant_chat_list);
+      } else {
+        console.error('Failed to fetch messages');
+      }
+    }
+
+    // Function to dynamically display messages in the chatbox
+    function displayMessages(userMessages, assistantMessages) {
+      const chatbox = document.getElementById('chatbox');
+      chatbox.innerHTML = "";  // Clear current chatbox contents
+      
+      userMessages.forEach((msg, index) => {
+        // Add user messages
+        addMessageToChatbox('You', msg, 'sent');
+        
+        // Add assistant messages (if exists for this index)
+        if (assistantMessages[index]) {
+          addMessageToChatbox('Assistant', assistantMessages[index], 'reply');
+        }
+      });
+
+      // Scroll to the bottom of the chatbox for the latest message
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    // Function to dynamically add a message to the chatbox
+    function addMessageToChatbox(sender, message, type) {
+      const chatbox = document.getElementById('chatbox');
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add(type + '_text');  // Class for styling (sent_text or reply_text)
+
+      messageDiv.innerHTML = `
+        <div class="${type}_text_container">
+          <div class="${type}_text_content_container">
+            <h4 class="${type}_name">${sender}</h4>
+            <p class="${type}_text_content">${message}</p>
+          </div>
+        </div>
+        <div class="profile_pic">
+          <img src="Hygiene.jpg" alt="profile" />
+        </div>
+      `;
+      chatbox.appendChild(messageDiv);
+      
+      // Scroll to the bottom after adding a new message
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    // Polling the server every 5 seconds to update messages
+    setInterval(fetchMessages, 500000);  // Fetch new messages every 5 seconds
+
+    // Initial message fetch when page loads
+    window.onload = fetchMessages;
+
+    // Send message when pressing the Enter key
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    }
+
+    // Function to get CSRF token for secure requests
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  </script>
+</body>
+</html>
