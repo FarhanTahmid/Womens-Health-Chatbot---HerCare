@@ -7,6 +7,7 @@ from user.models import ApplicationUser
 from openai import OpenAI
 import os
 from .chatbot import Chatbot
+from .context_generation import ContextGeneration
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -68,7 +69,6 @@ class ChatbotAPI(APIView):
         else:
             previous_message_status,user_chat_list,assistant_chat_list,msg=Chatbot.getAllMessagesOfUser(userChoice=application_user.choice_of_convo_remembering,userobject=application_user)
             if(previous_message_status):
-                print(user_chat_list)
                 return Response({'user_chat_list':user_chat_list,'assistant_chat_list':assistant_chat_list,'msg': msg}, status=status.HTTP_200_OK)
             else:
                 return Response({'msg': msg}, status=status.HTTP_400_BAD_REQUEST)
@@ -86,8 +86,9 @@ class ChatbotAPI(APIView):
         else:
             data=request.data
             user_message=data.get('user_message')
-
+            
             bot_status,message=Chatbot.generateAssistantMessages(user_message=user_message,userchoice=application_user.choice_of_convo_remembering,userObject=application_user)
+            
             if(bot_status):
                 return Response({'msg':f"{message}"},status=status.HTTP_200_OK)
             else:
@@ -98,4 +99,8 @@ class ChatbotAPI(APIView):
 
 @login_required
 def chatBox(request):
-    return render(request,'chatBox.html')
+    username=request.user.username
+    context={
+        'username':username
+    }
+    return render(request,'chatBox.html',context=context)

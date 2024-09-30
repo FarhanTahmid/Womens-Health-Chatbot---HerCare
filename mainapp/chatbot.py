@@ -1,6 +1,7 @@
 from openai import OpenAI
 import os
 from .models import *
+from .context_generation import ContextGeneration
 class Chatbot:
     
     client=OpenAI()
@@ -41,6 +42,10 @@ class Chatbot:
                 return False
     
     def createMessageToThread(thread_id,user_message):
+        posts_title,posts_text,post_comments=ContextGeneration.generateContext(message=user_message)
+            
+        user_message=user_message+f' cntxt- Some relevant reddit posts_list,post_texts_list, post_comments list related to the user text are given here: Posts:{posts_title}, Text in the Posts:{posts_text}, Corresponding comments with the post: {post_comments}'
+        print(user_message)
         try:
             message=Chatbot.client.beta.threads.messages.create(
                 thread_id=thread_id,
@@ -87,6 +92,7 @@ class Chatbot:
     
     def getAllMessagesOfUser(userobject,userChoice):
         user_message_list=[]
+        actual_user_message_list=[]
         assistant_message_list=[]
         if(userChoice):
             try:
@@ -98,9 +104,12 @@ class Chatbot:
                         user_message_list.append(message.content[0].text.value)
                     elif(message.role=='assistant'):
                         assistant_message_list.append(message.content[0].text.value)
-                return True,user_message_list[::-1],assistant_message_list[::-1],"Previous history retrieved!"
+                for message in user_message_list:
+                    actual_user_message_list.append(message.split('cntxt-')[0])
+                    
+                return True,actual_user_message_list[::-1],assistant_message_list[::-1],"Previous history retrieved!"
             except UserConversationThreads.DoesNotExist:
-                return True,user_message_list[::-1],assistant_message_list[::-1],"No previous chat history was found!"
+                return True,actual_user_message_list[::-1],assistant_message_list[::-1],"No previous chat history was found!"
             except Exception as e:
                 print(e)
                 return False,user_message_list,assistant_message_list,"Something went wrong while fetching messages"

@@ -6,7 +6,7 @@ app_name = "mainapp"
 urlpatterns = [
     path('',views.landingPage,name="landingPage"),
     path('chatbot',views.chatBox,name="chatbot"),
-    path('chatbotAPI/',ChatbotAPI.as_view(),name='chatbot'),
+    path('chatbotAPI/',ChatbotAPI.as_view(),name='chatbotapi'),
 
     
 ]

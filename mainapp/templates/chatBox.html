@@ -27,7 +27,7 @@
       if (message === "") return;  // Prevent sending empty messages
 
       // Immediately add user's message to chatbox
-      addMessageToChatbox('You', message, 'sent');
+      addMessageToChatbox('{{username}}', message, 'sent');
 
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -71,11 +71,11 @@
       
       userMessages.forEach((msg, index) => {
         // Add user messages
-        addMessageToChatbox('You', msg, 'sent');
+        addMessageToChatbox('{{username}}', msg, 'sent');
         
         // Add assistant messages (if exists for this index)
         if (assistantMessages[index]) {
-          addMessageToChatbox('Assistant', assistantMessages[index], 'reply');
+          addMessageToChatbox('HerCare', assistantMessages[index], 'reply');
         }
       });
 
@@ -83,11 +83,19 @@
       chatbox.scrollTop = chatbox.scrollHeight;
     }
 
-    // Function to dynamically add a message to the chatbox
+    // Function to dynamically add a message to the chatbox with different profile images
     function addMessageToChatbox(sender, message, type) {
       const chatbox = document.getElementById('chatbox');
       const messageDiv = document.createElement('div');
       messageDiv.classList.add(type + '_text');  // Class for styling (sent_text or reply_text)
+
+      // Set profile picture based on sender type
+      let profilePic;
+      if (sender === 'HerCare') {
+        profilePic = "{% static 'female.avif' %}";  // Assistant image
+      } else {
+        profilePic = "{% static 'user_image.png' %}";  // User image
+      }
 
       messageDiv.innerHTML = `
         <div class="${type}_text_container">
@@ -97,9 +105,10 @@
           </div>
         </div>
         <div class="profile_pic">
-          <img src="Hygiene.jpg" alt="profile" />
+          <img src="${profilePic}" alt="profile" />
         </div>
       `;
+
       chatbox.appendChild(messageDiv);
       
       // Scroll to the bottom after adding a new message
