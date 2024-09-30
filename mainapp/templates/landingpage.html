@@ -1,1 +1,99 @@
-<h1>Helloo</h1>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menstrual Period Information</title>
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        height: 100%;
+    }
+    .header {
+        background: #1e1e1e;
+        color: #ffffff;
+        padding: 10px 20px;
+        text-align: center;
+    }
+    .nav {
+        list-style-type: none;
+        padding: 0;
+        text-align: center;
+    }
+    .nav li {
+        display: inline;
+        margin-right: 20px;
+    }
+    .nav a {
+        color: white;
+        text-decoration: none;
+    }
+    .main {
+        background-color: #232323;
+        color: #fff;
+        background-image: url("{% static 'background.avif' %}");
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: calc(100vh - 120px); /* 100% height minus header and footer */
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+    .button {
+        background-color: #ff4081;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        display: inline-block;
+        margin: 10px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    .footer {
+        background-color: #2c2c2c;
+        color: #ffffff;
+        text-align: center;
+        padding: 10px 20px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+    h1 {
+        color:black;
+        margin: 0 0 20px;
+        font-size: 48px;
+    }
+    p {
+        color:black;
+        margin: 0 0 20px;
+        font-size: 18px;
+        max-width: 600px;
+    }
+</style>
+</head>
+<body>
+    <div class="header">
+        <ul class="nav">
+            <li><a href="#home">HOME</a></li>
+            <li><a href="#about">ABOUT</a></li>
+            <li><a href="#contact">CONTACT</a></li>
+            <li><a href="#help">HELP</a></li>
+        </ul>
+    </div>
+    <div class="main">
+        <h1>HerCare</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <button class="button">Login</button>
+    </div>
+    <div class="footer">
+        @HerCare
+    </div>
+</body>
+</html>
