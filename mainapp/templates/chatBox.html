@@ -8,6 +8,12 @@
   <link rel="stylesheet" href="{% static 'chatbox.css' %}">
 </head>
 <body>
+  <!-- Switch Button to Remember/Forget Conversation -->
+  <div class="switch_container">
+    <label for="remember_switch">Remember Conversation:</label>
+    <input type="checkbox" id="remember_switch" onclick="toggleRememberConversation()">
+  </div>
+
   <div class="chatbox_container" id="chatbox">
     <!-- Chat messages will be dynamically inserted here -->
   </div>
@@ -19,7 +25,8 @@
 
   <script>
     const apiUrl = '/chatbotAPI/';  // Replace with your chatbot API URL
-    
+    const toggleUrl = '/chatbotAPI/toggle/';  // Replace with your toggle API URL
+
     // Function to send a message using POST request
     async function sendMessage() {
       const messageInput = document.getElementById('message_input');
@@ -45,6 +52,49 @@
         console.error('Failed to send message');
       }
     }
+
+    // Function to toggle remember conversation switch and update it in real-time
+    async function toggleRememberConversation() {
+      const rememberSwitch = document.getElementById('remember_switch');
+      const rememberConversation = rememberSwitch.checked;  // true if checked, false if unchecked
+
+      // Send the toggle value to the backend
+      const response = await fetch(toggleUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ remember: rememberConversation })
+      });
+
+      if (response.ok) {
+        console.log("Remember conversation setting updated successfully.");
+      } else {
+        console.error("Failed to update remember conversation setting.");
+      }
+    }
+
+    // Function to fetch the current status of remember conversation when page is loaded
+    async function fetchToggleStatus() {
+      const response = await fetch(toggleUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const rememberSwitch = document.getElementById('remember_switch');
+        // Set the switch state based on the response from the server
+        rememberSwitch.checked = data.remember;
+      } else {
+        console.error("Failed to fetch remember conversation status.");
+      }
+    }
+
 
     // Function to fetch previous and current messages using GET request
     async function fetchMessages() {
@@ -115,7 +165,7 @@
       chatbox.scrollTop = chatbox.scrollHeight;
     }
 
-    // Polling the server every 5 seconds to update messages
+    // Polling the server every 500 seconds to update messages
     setInterval(fetchMessages, 500000);  // Fetch new messages every 5 seconds
 
     // Initial message fetch when page loads

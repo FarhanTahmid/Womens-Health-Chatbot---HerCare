@@ -52,6 +52,29 @@ def landingPage(request):
             
     return render(request,"landingpage.html")
 
+class ToggleAPI(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        username = request.user.username
+        
+        remember = request.data.get('remember', False)
+        
+        user_object=ApplicationUser.objects.get(username=username)
+        user_object.choice_of_convo_remembering=remember
+        user_object.save()
+        
+        return Response({'msg': "hello"}, status=status.HTTP_200_OK)
+    
+    def get(self,request):
+        print("get")
+        username = request.user.username
+        user_object = ApplicationUser.objects.get(username=username)  # Get the user's current setting
+        remember=user_object.choice_of_convo_remembering
+        return Response({'remember': remember})
+
+
+
 
 class ChatbotAPI(APIView):    
     @permission_classes([IsAuthenticated])
