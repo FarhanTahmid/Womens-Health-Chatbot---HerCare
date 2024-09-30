@@ -1,99 +1,291 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Menstrual Period Information</title>
-<style>
-    body, html {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        height: 100%;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome</title>
+  </head>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url("{% static 'Period-signs.webp' %}");
+      font-family: monospace;
+      background-size: cover;
+      background-position: top;
+      background-repeat: no-repeat;
+      height: 100vh;
+      width: 100vw;
+      overflow-y: hidden;
     }
-    .header {
-        background: #1e1e1e;
-        color: #ffffff;
-        padding: 10px 20px;
-        text-align: center;
+    .cover_page {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      object-fit: fill;
     }
-    .nav {
-        list-style-type: none;
-        padding: 0;
-        text-align: center;
+    .navbar {
+      display: flex;
+      flex-direction: row;
+      gap: 8.5rem;
+      justify-content: flex-end;
+      /* padding-top: 1.5rem; */
+      padding-right: 8.5rem;
+      background-color: transparent;
+      height: 50px;
     }
-    .nav li {
-        display: inline;
-        margin-right: 20px;
+
+    .navbar > button {
+      text-decoration: none;
+      border: none;
+      background: transparent;
+      font-weight: bold;
+      color: #333;
+      font-family: monospace;
+      font-size: 1.5rem;
+      border: 1px solid transparent;
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
     }
-    .nav a {
-        color: white;
-        text-decoration: none;
+    .navbar > button::after {
+      content: "";
+      width: 0%;
+      transition: all 0.2s ease-in-out;
+      display: block;
     }
-    .main {
-        background-color: #232323;
-        color: #fff;
-        background-image: url("{% static 'background.avif' %}");
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        justify-content: center;
+
+    .navbar > button:hover::after {
+      width: 100%;
+      border: 1px solid #333;
+    }
+
+    .header_section {
+      max-width: 500px;
+      display: block;
+      margin-top: 210px;
+      margin-left: 3.5rem;
+    }
+    .heading {
+      font-size: 5rem;
+      margin: 0;
+      line-height: 1;
+    }
+
+    .description {
+      font-family: sans-serif;
+      width: 500px;
+      margin: 25px 0;
+    }
+    .go_btn {
+      text-decoration: none;
+      border: 2px solid #d47988;
+      background-color: #d47988;
+      color: white;
+      padding: 15px 90px;
+      border-radius: 50px;
+      /* margin-top: 20px; */
+      transition: all 0.2s ease-in-out;
+      font-weight: bold;
+      font-size: large;
+    }
+
+    .go_btn:hover {
+      background-color: white;
+      color: #d47988;
+    }
+
+    .login_form,
+    .signup_form {
+      display: block;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      text-align: center;
+      width: 500px;
+      margin-top: 210px;
+      margin-left: 3.5rem;
+    }
+
+    .login_form.active,
+    .signup_form.active {
+      display: block;
+      opacity: 1;
+    }
+
+    .login_form input,
+    .signup_form input {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: 250px;
+      border: 1px solid;
+      border-color: #88888893;
+      border-radius: 2px;
+    }
+
+    .login_form button,
+    .signup_form button {
+      padding: 8px 32px;
+      cursor: pointer;
+      border: 2px solid #d47988;
+      background-color: #d47988;
+      color: white;
+      transition: all 0.2s ease-in-out;
+      border-radius: 2px;
+      margin-top: 5px;
+    }
+
+    .login_form input.btn,
+    .signup_form input.btn{
+      padding: 8px 32px;
+      cursor: pointer;
+      border: 2px solid #d47988;
+      background-color: #d47988;
+      color: white;
+      transition: all 0.2s ease-in-out;
+      border-radius: 2px;
+      margin-top: 5px;
+    }
+
+
+    .login_form button:hover,
+    .signup_form button:hover {
+      border: 2px solid #d47988;
+      background-color: white;
+      color: #d47988;
+    }
+
+    .signup-text {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+
+    .signup-text-a {
+      color: #d47988;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 18px;
+      margin: 0;
+    }
+
+    .signup-text-a:hover {
+      text-decoration: underline;
+    }
+
+    @media screen and (max-width: 1024px) {
+      .navbar {
+        background-color: white;
         align-items: center;
-        height: calc(100vh - 120px); /* 100% height minus header and footer */
-        flex-direction: column;
-        text-align: center;
-        padding: 20px;
+        padding-right: 0;
+        justify-content: center;
+      }
+      .header_section {
+        margin-top: 120px;
+      }
+      .description {
+        width: 300px;
+      }
+      .login_form,
+      .signup_form {
+        width: 300px;
+        margin-top: 120px;
+      }
     }
-    .button {
-        background-color: #ff4081;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        text-align: center;
-        display: inline-block;
-        margin: 10px;
-        cursor: pointer;
-        font-size: 16px;
+    @media screen and (max-width: 500px) {
+      .navbar {
+        gap: 0;
+        justify-content: space-around;
+      }
+      .header_section {
+        margin: 28px 25px;
+      }
+      .login_form,
+      .signup_form {
+        margin: auto;
+      }
+      .navbar > button {
+        font-size: 1rem;
+      }
+      .heading{
+        font-size: 3rem;
+      }
     }
-    .footer {
-        background-color: #2c2c2c;
-        color: #ffffff;
-        text-align: center;
-        padding: 10px 20px;
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-    }
-    h1 {
-        color:black;
-        margin: 0 0 20px;
-        font-size: 48px;
-    }
-    p {
-        color:black;
-        margin: 0 0 20px;
-        font-size: 18px;
-        max-width: 600px;
-    }
-</style>
-</head>
-<body>
-    <div class="header">
-        <ul class="nav">
-            <li><a href="#home">HOME</a></li>
-            <li><a href="#about">ABOUT</a></li>
-            <li><a href="#contact">CONTACT</a></li>
-            <li><a href="#help">HELP</a></li>
-        </ul>
+
+
+  </style>
+  <body>
+    <div class="navbar">
+      <button type="submit" onclick="window.location.href='{% url 'mainapp:landingPage' %}';">HOME</button>
+      <button type="submit">ABOUT</button>
+      <button type="submit">CONTACT</button>
+      <button type="submit">HELP</button>
     </div>
-    <div class="main">
-        <h1>HerCare</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-        <button class="button">Login</button>
+
+    <div class="header_section">
+      <h1 class="heading">
+        <span style="color: #d47988">Her</span>Care
+      </h1>
+      <p class="description">
+        A Bot that can take care of your needs!
+      </p>
+      <input class="go_btn" type="button" value="Login" />
     </div>
-    <div class="footer">
-        @HerCare
-    </div>
-</body>
+    <form method="POST">
+      {% csrf_token %}
+      <div class="login_form">
+        <h2 style="font-size: 2.5rem">Login</h2>
+        <input type="text" name="username" placeholder="Username" />
+        <input type="password" name="password" placeholder="Password" />
+        <input type="submit" value="Login" class="btn" name="login_button"></input>
+        {% for message in messages %}
+          <p class="message" style="color:#941910; text-align: center;">{{message}}</p>
+        {% endfor %}
+        <p class="signup-text">Don't have an account?</p>
+        <a class="signup-text-a" href="#">Sign up</a>
+      </div>
+
+      <div class="signup_form">
+        <h2 style="font-size: 2.5rem">Sign Up</h2>
+        <input type="text" name="signupUsername" placeholder="Username" />
+        <input type="password" name="signupPassword" placeholder="Password" />
+        <input type="password" name="confirm_password" placeholder="Confirm Password" />
+        <input class="btn" type="submit" value="Signup" name="signup_button"></input>
+
+      </div>
+
+    </form>
+    
+  </body>
+  <script>
+    const goBtn = document.querySelector(".go_btn");
+    const headerSection = document.querySelector(".header_section");
+    const loginForm = document.querySelector(".login_form");
+    const signupForm = document.querySelector(".signup_form");
+
+    goBtn.addEventListener("click", function () {
+      headerSection.style.display = "none";
+      loginForm.classList.add("active");
+    });
+
+    const signUpBtn = document.querySelector(".signup-text-a");
+
+    signUpBtn.addEventListener("click", function () {
+        loginForm.style.display = "none";
+
+      loginForm.classList.remove("active");
+      signupForm.classList.add("active");
+    });
+
+    const loginBtn = document.querySelector(".login-text-a");
+
+    loginBtn.addEventListener("click", function () {
+      signupForm.style.display = "none";
+
+      signupForm.classList.remove("active");
+      loginForm.classList.add("active");
+  });
+
+
+  </script>
 </html>
